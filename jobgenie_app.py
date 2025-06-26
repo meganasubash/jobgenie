@@ -111,8 +111,9 @@ def get_job_listings(role):
     return jobs[:5] if jobs else []
 
 def query_mistral(prompt):
-    
-    #OpenRouter key
+    import requests
+
+    api_key = st.secrets["openrouter_key"]
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
@@ -125,8 +126,18 @@ def query_mistral(prompt):
         ]
     }
 
-    response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
-    return response.json()["choices"][0]["message"]["content"]
+    try:
+        response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
+        response.raise_for_status()
+        result = response.json()
+
+        # Safely handle missing choices
+        if "choices" in result and result["choices"]:
+            return result["choices"][0]["message"]["content"]
+        else:
+            return f"⚠️ Mistral API returned no choices:\n{result}"
+    except Exception as e:
+        return f"⚠️ Error calling Mistral API:\n{e}"
 
 
 # ------------------------ LANDING PAGE ------------------------

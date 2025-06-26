@@ -74,7 +74,7 @@ def clean_career_title(title):
     return title
 
 JSEARCH_API_KEY = st.secrets["rapidapi_key"]
-api_key = st.secrets["openrouter_key"]
+
 
 def get_job_listings(role):
     headers = {
@@ -111,7 +111,7 @@ def get_job_listings(role):
     return jobs[:5] if jobs else []
 
 def query_mistral(prompt):
-    import requests
+   
 
     api_key = st.secrets["openrouter_key"]
     headers = {
